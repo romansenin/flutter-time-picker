@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
 class ArcChooser extends StatefulWidget {
-
   ArcSelectedCallback arcSelectedCallback;
 
   @override
@@ -14,7 +13,8 @@ class ArcChooser extends StatefulWidget {
   }
 }
 
-class ChooserState extends State<ArcChooser> with SingleTickerProviderStateMixin {
+class ChooserState extends State<ArcChooser>
+    with SingleTickerProviderStateMixin {
   var slideValue = 200;
   Offset centerPoint;
 
@@ -24,10 +24,10 @@ class ChooserState extends State<ArcChooser> with SingleTickerProviderStateMixin
 
   static double center = 270.0;
   static double centerInRadians = degreeToRadians(center);
-  static double angle = 45.0;
+  static double angle = 30.0;
 
   static double angleInRadians = degreeToRadians(angle);
-  static double angleInRadiansByTwo = angleInRadians/2;
+  static double angleInRadiansByTwo = angleInRadians / 2;
   static double centerItemAngle = degreeToRadians(center - (angle / 2));
   List<ArcItem> arcItems;
 
@@ -42,40 +42,43 @@ class ChooserState extends State<ArcChooser> with SingleTickerProviderStateMixin
 
   ArcSelectedCallback arcSelectedCallback;
 
-  ChooserState(ArcSelectedCallback arcSelectedCallback){
+  ChooserState(ArcSelectedCallback arcSelectedCallback) {
     this.arcSelectedCallback = arcSelectedCallback;
   }
 
   static double degreeToRadians(double degree) {
-    return degree * (PI / 180);
+    return degree * (pi / 180);
   }
 
   static double radianToDegrees(double radian) {
-    return radian * (180 / PI );
+    return radian * (180 / pi);
   }
 
   @override
   void initState() {
     arcItems = List<ArcItem>();
 
+    for (var i = 1; i <= 12; i++) {
+      arcItems.add(ArcItem("$i", [Color(0xFFc9c9c9), Color(0xFFc9c9c9)],
+          angleInRadiansByTwo + userAngle + ((i - 1) * angleInRadians)));
+    }
 
-    arcItems.add(ArcItem("UGH", [Color(0xFFF9D976), Color(0xfff39f86)],
-        angleInRadiansByTwo + userAngle));
-    arcItems.add(ArcItem("OK", [Color(0xFF21e1fa), Color(0xff3bb8fd)],
-        angleInRadiansByTwo + userAngle + (angleInRadians)));
-    arcItems.add(ArcItem("GOOD", [Color(0xFF3ee98a), Color(0xFF41f7c7)],
-        angleInRadiansByTwo + userAngle + (2 * angleInRadians)));
-    arcItems.add(ArcItem("BAD", [Color(0xFFfe0944), Color(0xFFfeae96)],
-        angleInRadiansByTwo + userAngle + (3 * angleInRadians)));
-    arcItems.add(ArcItem("UGH", [Color(0xFFF9D976), Color(0xfff39f86)],
-        angleInRadiansByTwo + userAngle + (4 * angleInRadians)));
-    arcItems.add(ArcItem("OK", [Color(0xFF21e1fa), Color(0xff3bb8fd)],
-        angleInRadiansByTwo + userAngle + (5 * angleInRadians)));
-    arcItems.add(ArcItem("GOOD", [Color(0xFF3ee98a), Color(0xFF41f7c7)],
-        angleInRadiansByTwo + userAngle + (6 * angleInRadians)));
-    arcItems.add(ArcItem("BAD", [Color(0xFFfe0944), Color(0xFFfeae96)],
-        angleInRadiansByTwo + userAngle + (7 * angleInRadians)));
-
+    // arcItems.add(ArcItem("UGH", [Color(0xFFF9D976), Color(0xfff39f86)],
+    //     angleInRadiansByTwo + userAngle));
+    // arcItems.add(ArcItem("OK", [Color(0xFF21e1fa), Color(0xff3bb8fd)],
+    //     angleInRadiansByTwo + userAngle + (angleInRadians)));
+    // arcItems.add(ArcItem("GOOD", [Color(0xFF3ee98a), Color(0xFF41f7c7)],
+    //     angleInRadiansByTwo + userAngle + (2 * angleInRadians)));
+    // arcItems.add(ArcItem("BAD", [Color(0xFFfe0944), Color(0xFFfeae96)],
+    //     angleInRadiansByTwo + userAngle + (3 * angleInRadians)));
+    // arcItems.add(ArcItem("UGH", [Color(0xFFF9D976), Color(0xfff39f86)],
+    //     angleInRadiansByTwo + userAngle + (4 * angleInRadians)));
+    // arcItems.add(ArcItem("OK", [Color(0xFF21e1fa), Color(0xff3bb8fd)],
+    //     angleInRadiansByTwo + userAngle + (5 * angleInRadians)));
+    // arcItems.add(ArcItem("GOOD", [Color(0xFF3ee98a), Color(0xFF41f7c7)],
+    //     angleInRadiansByTwo + userAngle + (6 * angleInRadians)));
+    // arcItems.add(ArcItem("BAD", [Color(0xFFfe0944), Color(0xFFfeae96)],
+    //     angleInRadiansByTwo + userAngle + (7 * angleInRadians)));
 
     animation = new AnimationController(
         duration: const Duration(milliseconds: 200), vsync: this);
@@ -83,8 +86,8 @@ class ChooserState extends State<ArcChooser> with SingleTickerProviderStateMixin
       userAngle = lerpDouble(animationStart, animationEnd, animation.value);
       setState(() {
         for (int i = 0; i < arcItems.length; i++) {
-          arcItems[i].startAngle = angleInRadiansByTwo + userAngle +
-              (i * angleInRadians);
+          arcItems[i].startAngle =
+              angleInRadiansByTwo + userAngle + (i * angleInRadians);
         }
       });
     });
@@ -98,12 +101,6 @@ class ChooserState extends State<ArcChooser> with SingleTickerProviderStateMixin
     centerPoint = Offset(centerX, centerY);
 
     return new GestureDetector(
-//        onTap: () {
-//          print('ChooserState.build ONTAP');
-//          animationStart = touchAngle;
-//          animationEnd = touchAngle + angleInRadians;
-//          animation.forward(from: 0.0);
-//        },
       onPanStart: (DragStartDetails details) {
         startingPoint = details.globalPosition;
         var deltaX = centerPoint.dx - details.globalPosition.dx;
@@ -124,41 +121,43 @@ class ChooserState extends State<ArcChooser> with SingleTickerProviderStateMixin
         });
         startAngle = freshAngle;
       },
-      onPanEnd: (DragEndDetails details){
-
+      onPanEnd: (DragEndDetails details) {
         //find top arc item with Magic!!
-        bool rightToLeft = startingPoint.dx<endingPoint.dx;
+        bool rightToLeft = startingPoint.dx < endingPoint.dx;
 
 //        Animate it from this values
         animationStart = userAngle;
-        if(rightToLeft) {
-          animationEnd +=angleInRadians;
+        if (rightToLeft) {
+          animationEnd += angleInRadians;
           currentPosition--;
-          if(currentPosition<0){
-            currentPosition = arcItems.length-1;
+          if (currentPosition < 0) {
+            currentPosition = arcItems.length - 1;
           }
-        }else{
-          animationEnd -=angleInRadians;
+        } else {
+          animationEnd -= angleInRadians;
           currentPosition++;
-          if(currentPosition>=arcItems.length){
+          if (currentPosition >= arcItems.length) {
             currentPosition = 0;
           }
         }
 
-        if(arcSelectedCallback!=null){
-          arcSelectedCallback(currentPosition, arcItems[(currentPosition>=(arcItems.length-1))?0:currentPosition+1]);
+        if (arcSelectedCallback != null) {
+          arcSelectedCallback(
+              currentPosition,
+              arcItems[(currentPosition >= (arcItems.length - 1))
+                  ? 0
+                  : currentPosition + 1]);
         }
 
         animation.forward(from: 0.0);
       },
       child: CustomPaint(
         size: Size(MediaQuery.of(context).size.width,
-          MediaQuery.of(context).size.width * 1 / 1.5),
+            MediaQuery.of(context).size.width * 1 / 1.5),
         painter: ChooserPainter(arcItems, angleInRadians),
       ),
     );
   }
-
 }
 
 // draw the arc and other stuff
@@ -190,13 +189,12 @@ class ChooserPainter extends CustomPainter {
   ChooserPainter(List<ArcItem> arcItems, double angleInRadians) {
     this.arcItems = arcItems;
     this.angleInRadians = angleInRadians;
-    this.angleInRadiansByTwo = angleInRadians/2;
+    this.angleInRadiansByTwo = angleInRadians / 2;
 
-    angleInRadians1 = angleInRadians/6;
-    angleInRadians2 = angleInRadians/3;
-    angleInRadians3 = angleInRadians*4/6;
-    angleInRadians4 = angleInRadians*5/6;
-
+    angleInRadians1 = angleInRadians / 6;
+    angleInRadians2 = angleInRadians / 3;
+    angleInRadians3 = angleInRadians * 4 / 6;
+    angleInRadians4 = angleInRadians * 5 / 6;
   }
 
   @override
@@ -224,7 +222,7 @@ class ChooserPainter extends CustomPainter {
     double bottomY2 = centerY + radiusItems;
 
     //for shadow
-    double radiusShadow = radius*1.13;
+    double radiusShadow = radius * 1.13;
     double leftX3 = centerX - radiusShadow;
     double topY3 = centerY - radiusShadow;
     double rightX3 = centerX + radiusShadow;
@@ -234,7 +232,6 @@ class ChooserPainter extends CustomPainter {
     double radius4 = radius * 1.12;
     double radius5 = radius * 1.06;
     var arcRect = Rect.fromLTRB(leftX2, topY2, rightX2, bottomY2);
-
 
     var dummyRect = Rect.fromLTRB(0.0, 0.0, size.width, size.height);
 
@@ -252,63 +249,48 @@ class ChooserPainter extends CustomPainter {
               colors: arcItems[i].colors,
             ).createShader(dummyRect));
 
-
-
       //Draw text
-      TextSpan span = new TextSpan(style: new TextStyle(fontWeight: FontWeight.normal, fontSize: 32.0, color: Colors.white), text: arcItems[i].text);
-      TextPainter tp = new TextPainter(text: span, textAlign: TextAlign.center, textDirection: TextDirection.ltr,);
+      TextSpan span = new TextSpan(
+          style: new TextStyle(
+              fontWeight: FontWeight.normal,
+              fontSize: 32.0,
+              color: Colors.black),
+          text: arcItems[i].text);
+      TextPainter tp = new TextPainter(
+        text: span,
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+      );
       tp.layout();
 
       //find additional angle to make text in center
-      double f = tp.width/2;
-      double t = sqrt((radiusText*radiusText) + (f*f));
+      double f = tp.width / 2;
+      double t = sqrt((radiusText * radiusText) + (f * f));
 
-      double additionalAngle = acos(((t*t) + (radiusText*radiusText)-(f*f))/(2*t*radiusText));
+      double additionalAngle = acos(
+          ((t * t) + (radiusText * radiusText) - (f * f)) /
+              (2 * t * radiusText));
 
-      double tX = center.dx + radiusText*cos(arcItems[i].startAngle+angleInRadiansByTwo - additionalAngle);// - (tp.width/2);
-      double tY = center.dy + radiusText*sin(arcItems[i].startAngle+angleInRadiansByTwo - additionalAngle);// - (tp.height/2);
+      double tX = center.dx +
+          radiusText *
+              cos(arcItems[i].startAngle +
+                  angleInRadiansByTwo -
+                  additionalAngle); // - (tp.width/2);
+      double tY = center.dy +
+          radiusText *
+              sin(arcItems[i].startAngle +
+                  angleInRadiansByTwo -
+                  additionalAngle); // - (tp.height/2);
 
       canvas.save();
-      canvas.translate(tX,tY);
-//      canvas.rotate(arcItems[i].startAngle + angleInRadiansByTwo);
-      canvas.rotate(arcItems[i].startAngle+angleInRadians+angleInRadians+angleInRadiansByTwo);
-      tp.paint(canvas, new Offset(0.0,0.0));
+      canvas.translate(tX, tY);
+      // canvas.rotate(arcItems[i].startAngle +
+      //     angleInRadians +
+      //     angleInRadians +
+      //     angleInRadiansByTwo);
+      tp.paint(canvas, new Offset(0.0, 0.0));
       canvas.restore();
-
-
-      //big lines
-      canvas.drawLine(
-          new Offset(center.dx + radius4*cos(arcItems[i].startAngle), center.dy + radius4*sin(arcItems[i].startAngle)),
-          center,
-          linePaint);
-
-      canvas.drawLine(
-          new Offset(center.dx + radius4*cos(arcItems[i].startAngle+angleInRadiansByTwo), center.dy + radius4*sin(arcItems[i].startAngle+angleInRadiansByTwo)),
-          center,
-          linePaint);
-
-      //small lines
-      canvas.drawLine(
-          new Offset(center.dx + radius5*cos(arcItems[i].startAngle+angleInRadians1), center.dy + radius5*sin(arcItems[i].startAngle+angleInRadians1)),
-          center,
-          linePaint);
-
-      canvas.drawLine(
-          new Offset(center.dx + radius5*cos(arcItems[i].startAngle+angleInRadians2), center.dy + radius5*sin(arcItems[i].startAngle+angleInRadians2)),
-          center,
-          linePaint);
-
-      canvas.drawLine(
-          new Offset(center.dx + radius5*cos(arcItems[i].startAngle+angleInRadians3), center.dy + radius5*sin(arcItems[i].startAngle+angleInRadians3)),
-          center,
-          linePaint);
-
-      canvas.drawLine(
-          new Offset(center.dx + radius5*cos(arcItems[i].startAngle+angleInRadians4), center.dy + radius5*sin(arcItems[i].startAngle+angleInRadians4)),
-          center,
-          linePaint);
     }
-
 
     //shadow
     Path shadowPath = new Path();
@@ -325,7 +307,6 @@ class ChooserPainter extends CustomPainter {
         ChooserState.degreeToRadians(180.0),
         true,
         whitePaint);
-
   }
 
   @override
