@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:review/ArcChooser.dart';
 
@@ -20,26 +21,29 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: new Scaffold(
         backgroundColor: Colors.blue,
-        body: new MyReviewPage(),
+        body: new TimePicker(),
       ),
     );
   }
 }
 
-class MyReviewPage extends StatefulWidget {
-  MyReviewPage({Key key}) : super(key: key);
+class TimePicker extends StatefulWidget {
+  TimePicker({Key key}) : super(key: key);
 
   @override
-  _MyReviewPageState createState() => new _MyReviewPageState();
+  _TimePickerState createState() => new _TimePickerState();
 }
 
-class _MyReviewPageState extends State<MyReviewPage>
-    with TickerProviderStateMixin {
+class _TimePickerState extends State<TimePicker> with TickerProviderStateMixin {
   final PageController pageControl = new PageController(
     initialPage: 2,
     keepPage: false,
     viewportFraction: 0.2,
   );
+
+  List<String> hours = List<String>();
+  List<String> minutes = List<String>();
+  List<String> periods = List<String>();
 
   int slideValue = 200;
   int lastAnimPosition = 2;
@@ -59,6 +63,17 @@ class _MyReviewPageState extends State<MyReviewPage>
   @override
   void initState() {
     super.initState();
+
+    for (var i = 1; i <= 12; i++) {
+      hours.add("$i");
+    }
+
+    for (var i = 1; i <= 59; i++) {
+      minutes.add("$i");
+    }
+
+    periods.add("AM");
+    periods.add("PM");
 
     badArcItem = ArcItem("BAD", [Color(0xFFfe0944), Color(0xFFfeae96)], 0.0);
     ughArcItem = ArcItem("UGH", [Color(0xFFF9D976), Color(0xfff39f86)], 0.0);
@@ -129,7 +144,7 @@ class _MyReviewPageState extends State<MyReviewPage>
           Stack(
               alignment: AlignmentDirectional.bottomCenter,
               children: <Widget>[
-                ArcChooser()
+                ArcChooser(hours)
                   ..arcSelectedCallback = (int pos, ArcItem item) {
                     int animPosition = pos - 2;
                     if (animPosition > 3) {
@@ -160,18 +175,23 @@ class _MyReviewPageState extends State<MyReviewPage>
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25.0)),
                     elevation: 8.0,
-                    child: Container(
-                        width: 150.0,
-                        height: 50.0,
-                        decoration: BoxDecoration(
-                          gradient:
-                              LinearGradient(colors: [startColor, endColor]),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          'SUBMIT',
-                          style: textStyle,
-                        )),
+                    child: GestureDetector(
+                      onTap: () {
+                        print("Clicked save button!");
+                      },
+                      child: Container(
+                          width: 150.0,
+                          height: 50.0,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                colors: [Color(0xFFc9c9c9), Color(0xFFc9c9c9)]),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            'SAVE',
+                            style: textStyle,
+                          )),
+                    ),
                   ),
                 )
               ]),

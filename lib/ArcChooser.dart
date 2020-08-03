@@ -7,9 +7,13 @@ import 'package:flutter/painting.dart';
 class ArcChooser extends StatefulWidget {
   ArcSelectedCallback arcSelectedCallback;
 
+  List<String> choices;
+
+  ArcChooser(this.choices);
+
   @override
   State<StatefulWidget> createState() {
-    return ChooserState(arcSelectedCallback);
+    return ChooserState(arcSelectedCallback, choices);
   }
 }
 
@@ -24,12 +28,28 @@ class ChooserState extends State<ArcChooser>
 
   static double center = 270.0;
   static double centerInRadians = degreeToRadians(center);
-  static double angle = 30.0;
-
-  static double angleInRadians = degreeToRadians(angle);
-  static double angleInRadiansByTwo = angleInRadians / 2;
-  static double centerItemAngle = degreeToRadians(center - (angle / 2));
+  double angle = 0.0;
+  double angleInRadians = 0.0;
+  double angleInRadiansByTwo = 0.0;
+  double centerItemAngle = 0.0;
   List<ArcItem> arcItems;
+
+  ChooserState(ArcSelectedCallback arcSelectedCallback, List<String> choices) {
+    this.arcSelectedCallback = arcSelectedCallback;
+    this.angle = 360 / choices.length;
+    this.angleInRadians = degreeToRadians(angle);
+    this.angleInRadiansByTwo = angleInRadians / 2;
+    this.centerItemAngle = degreeToRadians(center - (angle / 2));
+
+    arcItems = List<ArcItem>();
+
+    for (var i = 0; i < choices.length; i++) {
+      arcItems.add(ArcItem(
+          "${choices[i]}",
+          [Color(0xFFc9c9c9), Color(0xFFc9c9c9)],
+          angleInRadiansByTwo + userAngle + ((i - 1) * angleInRadians)));
+    }
+  }
 
   AnimationController animation;
   double animationStart;
@@ -42,10 +62,6 @@ class ChooserState extends State<ArcChooser>
 
   ArcSelectedCallback arcSelectedCallback;
 
-  ChooserState(ArcSelectedCallback arcSelectedCallback) {
-    this.arcSelectedCallback = arcSelectedCallback;
-  }
-
   static double degreeToRadians(double degree) {
     return degree * (pi / 180);
   }
@@ -56,30 +72,6 @@ class ChooserState extends State<ArcChooser>
 
   @override
   void initState() {
-    arcItems = List<ArcItem>();
-
-    for (var i = 1; i <= 12; i++) {
-      arcItems.add(ArcItem("$i", [Color(0xFFc9c9c9), Color(0xFFc9c9c9)],
-          angleInRadiansByTwo + userAngle + ((i - 1) * angleInRadians)));
-    }
-
-    // arcItems.add(ArcItem("UGH", [Color(0xFFF9D976), Color(0xfff39f86)],
-    //     angleInRadiansByTwo + userAngle));
-    // arcItems.add(ArcItem("OK", [Color(0xFF21e1fa), Color(0xff3bb8fd)],
-    //     angleInRadiansByTwo + userAngle + (angleInRadians)));
-    // arcItems.add(ArcItem("GOOD", [Color(0xFF3ee98a), Color(0xFF41f7c7)],
-    //     angleInRadiansByTwo + userAngle + (2 * angleInRadians)));
-    // arcItems.add(ArcItem("BAD", [Color(0xFFfe0944), Color(0xFFfeae96)],
-    //     angleInRadiansByTwo + userAngle + (3 * angleInRadians)));
-    // arcItems.add(ArcItem("UGH", [Color(0xFFF9D976), Color(0xfff39f86)],
-    //     angleInRadiansByTwo + userAngle + (4 * angleInRadians)));
-    // arcItems.add(ArcItem("OK", [Color(0xFF21e1fa), Color(0xff3bb8fd)],
-    //     angleInRadiansByTwo + userAngle + (5 * angleInRadians)));
-    // arcItems.add(ArcItem("GOOD", [Color(0xFF3ee98a), Color(0xFF41f7c7)],
-    //     angleInRadiansByTwo + userAngle + (6 * angleInRadians)));
-    // arcItems.add(ArcItem("BAD", [Color(0xFFfe0944), Color(0xFFfeae96)],
-    //     angleInRadiansByTwo + userAngle + (7 * angleInRadians)));
-
     animation = new AnimationController(
         duration: const Duration(milliseconds: 200), vsync: this);
     animation.addListener(() {
@@ -233,7 +225,7 @@ class ChooserPainter extends CustomPainter {
     double radius5 = radius * 1.06;
     var arcRect = Rect.fromLTRB(leftX2, topY2, rightX2, bottomY2);
 
-    var dummyRect = Rect.fromLTRB(0.0, 0.0, size.width, size.height);
+    var dummyRect = Rect.fromLTRB(0.0, 0.0, 800, 800);
 
     canvas.clipRect(dummyRect, clipOp: ClipOp.intersect);
 
@@ -253,7 +245,7 @@ class ChooserPainter extends CustomPainter {
       TextSpan span = new TextSpan(
           style: new TextStyle(
               fontWeight: FontWeight.normal,
-              fontSize: 32.0,
+              fontSize: 20.0,
               color: Colors.black),
           text: arcItems[i].text);
       TextPainter tp = new TextPainter(
@@ -293,12 +285,12 @@ class ChooserPainter extends CustomPainter {
     }
 
     //shadow
-    Path shadowPath = new Path();
-    shadowPath.addArc(
-        Rect.fromLTRB(leftX3, topY3, rightX3, bottomY3),
-        ChooserState.degreeToRadians(180.0),
-        ChooserState.degreeToRadians(180.0));
-    canvas.drawShadow(shadowPath, Colors.black, 18.0, true);
+    // Path shadowPath = new Path();
+    // shadowPath.addArc(
+    //     Rect.fromLTRB(leftX3, topY3, rightX3, bottomY3),
+    //     ChooserState.degreeToRadians(180.0),
+    //     ChooserState.degreeToRadians(180.0));
+    // canvas.drawShadow(shadowPath, Colors.black, 18.0, true);
 
     //bottom white arc
     canvas.drawArc(
